@@ -27,7 +27,6 @@ Kotlin is a language developed by JetBrains, the company behind IntelliJ, so eve
    * The main function is a top-level function, meaning there's no need to create a class to hold it, like languages such as Java, C# or Scala
    * The default visibility is `public`, which can be omitted for the main function
    * If you navigate to the declaration of `runApplication`, you'll see the that it's declared in a Kotlin extension class. It's part of the [Spring Boot Kotlin support](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-kotlin.html), enabling writing more idiomatic code
-   * TODO: function return
 1. Open you `pom.xml` file. There are a few things you can notice:
    * [`kotlin-maven-plugin`](https://kotlinlang.org/docs/reference/using-maven.html#compiling-kotlin-only-source-code): used to compile Kotlin code. `sourceDirectory` and `testSourceDirectory` are also configured
    * [`kotlin-maven-allopen`](https://kotlinlang.org/docs/reference/compiler-plugins.html#all-open-compiler-plugin): Kotlin has classes and their members `final` by default, which makes it inconvenient to use frameworks such as Spring that require classes to be open. The all-open plugin, which has [Spring support](https://kotlinlang.org/docs/reference/compiler-plugins.html#spring-support), makes classes annotated with a specific annotation and their members open without the explicit open keyword
@@ -36,7 +35,7 @@ Kotlin is a language developed by JetBrains, the company behind IntelliJ, so eve
 1. Implement the class [`HelloWorldResource`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/4e0a14b7bf62e58f15473cda25fc2bd3e9f72e19/src/main/kotlin/com/example/blog/HelloWorldResource.kt)
 1. Re-run the application with `./mvnw spring-boot:run`
 1. Open your browser on [http://localhost:8080/hello](http://localhost:8080/hello). You should see "Hello" on the page displayed.
-1. A few things to notice:
+### Understanding the code
    * `hello()` is a [single-expression function](https://kotlinlang.org/docs/reference/functions.html#single-expression-functions), so the curly braces can be omitted
    * For single-expression functions explicitly declaring the return type is optional when this can be inferred by the compile
 
@@ -82,23 +81,23 @@ To make it easier, see the necessary changes in this [diff](https://github.com/f
 * [`getForEntity`](https://docs.spring.io/spring-framework/docs/5.0.7.RELEASE/kdoc-api/spring-framework/org.springframework.web.client/get-for-entity.html#) is another [Spring Kotlin extension](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/languages.html#kotlin-extensions). It takes advantage of Kotlin [reified type parameters](https://kotlinlang.org/docs/reference/inline-functions.html#reified-type-parameters), overcoming Java [type erasure](https://docs.oracle.com/javase/tutorial/java/generics/erasure.html) limitation which would require the usage of `ParameterizedTypeReference<List<Article>>`
 
 # Persistence with JPA
-1. Annotate `Article` with `@Entity` and `Article.id` with `@Id @GeneratedValue. Final result: [`Article`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/Article.kt)
+1. Annotate `Article` with `@Entity` and `Article.id` with `@Id @GeneratedValue`. Final result: [`Article`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/Article.kt)
 1. Implement [`ArticleRepository`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/ArticleRepository.kt)
-1. TODO: remove @autowired - Use the `ArticleRepository` to retrieve the list of Articles on [`ArticleResource`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/ArticleResource.kt)
+1. Use the `ArticleRepository` to retrieve the list of Articles on [`ArticleResource`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/master/src/main/kotlin/com/example/blog/ArticleResource.kt)
 1. Add the Kotlin JPA plugin and add `kotlin-maven-noarg` dependency to the [`pom.xml](https://github.com/fabriciolemos/kotlin-spring-boot-lab/commit/1a3f0dbae6888f1250f367a1b97a325cb9dd934a)
 1. Re-run the application with `./mvnw spring-boot:run`
 1. Open your browser on [http://localhost:8080/article](http://localhost:8080/article). The result is not very exciting and you won't see anything since the database is empty. We'll solve this on next section
 ### Understanding the code
 * JPA annotations can be used in the primary constructors, contributing for a concise code
-* Primary constructors will also have its dependencies automatically autowired, which is the case of [`ArticleResource`]
+* Primary constructors will also have its dependencies automatically autowired, which is the case of `ArticleResource`
 * JPA requires the entities to have a zero-argument constructor. Since we added the primary constructor to `Article`, the entity is no longer satisfying that requirement. Kotlin [no-arg plugin](https://kotlinlang.org/docs/reference/compiler-plugins.html#no-arg-compiler-plugin) with JPA [support](https://kotlinlang.org/docs/reference/compiler-plugins.html#jpa-support) adds a zero-argument constructor for classes annotated with `@Entity`, `@Embeddable` and `@MappedSuperclass`
 
 # Add some Articles to the database
-1. TODO: remove @autowired - Implement the function [`BlogApplication.initDatabase()`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/BlogApplication.kt#L13)
+1. Implement the function [`BlogApplication.initDatabase()`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/master/src/main/kotlin/com/example/blog/BlogApplication.kt#L12)
 1. Re-run the application with `./mvnw spring-boot:run`
 1. Open your browser on [http://localhost:8080/article](http://localhost:8080/article). Now you should see some Articles on the page
 ### Understanding the code
-* Now that [`BlogApplication`] has a body, it needs curly braces
+* Now that `BlogApplication` has a body, it needs curly braces
 * The function `initDatabase` produces a `@Bean` of type [`CommandLineRunner`](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/CommandLineRunner.html) which implements a callback to run specific pieces of code when an application is fully started
 * `CommandLineRunner` is a [`FunctionalInterface`](https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html), meaning it's a Single Abstract Method ([SAM](http://cr.openjdk.java.net/~briangoetz/lambda/lambda-state-3.html)) interface, which can be [automatically converted](https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions) from Kotlin [function literals](https://kotlinlang.org/docs/reference/lambdas.html#lambda-expressions-and-anonymous-functions). If it got too complicated, the bottom line is the Kotlin support for functional programming allows us to implement the method the way we did, instead of having to [explicitly](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-command-line-runner) declare a class to instantiate a single method
 
