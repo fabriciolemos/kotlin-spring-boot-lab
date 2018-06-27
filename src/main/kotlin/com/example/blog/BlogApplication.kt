@@ -1,6 +1,5 @@
 package com.example.blog
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -10,7 +9,7 @@ import org.springframework.context.annotation.Bean
 class BlogApplication {
 
     @Bean
-    fun initDatabase(@Autowired articleRepository: ArticleRepository) = CommandLineRunner {
+    fun initDatabase(articleRepository: ArticleRepository) = CommandLineRunner {
         val articles = listOf(
             Article("My First Article", "my 1st article content"),
             Article("My Second Article", "my 2nd article content"))
