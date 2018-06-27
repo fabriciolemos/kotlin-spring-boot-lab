@@ -100,3 +100,20 @@ While JUnit 4 is still the default testing framework provided with Spring Boot, 
 * The function `initDatabase` produces a `@Bean` of type [`CommandLineRunner`](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/CommandLineRunner.html) which implements a callback to run specific pieces of code when an application is fully started
 * `CommandLineRunner` is a [`FunctionalInterface`](https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html), meaning it's a Single Abstract Method ([SAM](http://cr.openjdk.java.net/~briangoetz/lambda/lambda-state-3.html)) interface, which can be [automatically converted](https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions) from Kotlin [function literals](https://kotlinlang.org/docs/reference/lambdas.html#lambda-expressions-and-anonymous-functions). If it got too complicated, the bottom line is the Kotlin support for functional programming allows us to implement the method the way we did, instead of having to [explicitly](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-command-line-runner) declare a class to instantiate a single method
 
+# Review
+So that's it for now. Even though we haven't implemented the most exciting application, the small portion of code we wrote was able to introduce some key Kotlin features, such as:
+* Basic syntax, e.g., class and function declaration, class instantiation
+* Top-level functions
+* Single-expression functions and optional return declaration
+* Data classes
+* Primary constructors
+* Kotlin Standard Library
+* Default imports
+* Functional parameters default values
+* Nullable and non-nullable types
+* Reified type parameters
+* Lambda Expressions and function literals
+* JUnit 5 integration
+* JPA integration
+* Kotlin Maven plugins
+* Spring Kotlin extensions
