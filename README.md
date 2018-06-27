@@ -45,7 +45,7 @@ Kotlin is a language developed by JetBrains, the company behind IntelliJ, so eve
 1. Implement the [`ArticleResource`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/397ba363438c729f6bd637aacd95edb57a05cc49/src/main/kotlin/com/example/blog/ArticleResource.kt) Rest endpoint returning a list of Articles.
 1. Re-run the application with `./mvnw spring-boot:run`
 1. Open your browser on [http://localhost:8080/article](http://localhost:8080/article). You should see the JSON representation of the list returned
-### Understanding the code:
+### Understanding the code
 * `Article`
    * Is a class whose main purpose is to hold data, making it a good candidate to be a [Data Class](https://kotlinlang.org/docs/reference/data-classes.html), which automatically provide `equals()`, `hashCode()`, `toString()`, `componentN()` and `copy()` functions 
    * It uses its [primary constructor](https://kotlinlang.org/docs/reference/classes.html#constructors) to declare and initialize its properties in a concise way. Properties declared in the primary constructor can be mutable (`var`) or read-only (`val`)
@@ -55,5 +55,50 @@ Kotlin is a language developed by JetBrains, the company behind IntelliJ, so eve
    * `listOf`function is part of [Kotlin Standard Library](https://kotlinlang.org/api/latest/jvm/stdlib/index.html), which provides living essentials for everyday work with Kotlin
    * You didn't have to import `listOf`. Just like Java has `java.lang`, Kotlin has some packages that are [imported by default](https://kotlinlang.org/docs/reference/packages.html#default-imports)
 
-# Add Article optional properties
-TODO
+# Add Article properties with default values
+1. Add the properties `createdAt` of type `LocalDateTime` and `id` of type `Long?` with default values
+1. Re-run the application with `./mvnw spring-boot:run`
+1. Open your browser on [http://localhost:8080/article](http://localhost:8080/article). You should see the new properties on the objects in the list
+### Understanding the code
+* Function parameters can have [default values](https://kotlinlang.org/docs/reference/functions.html#default-arguments), which are used when a corresponding argument is omitted. 
+* Kotlin's [type system](https://kotlinlang.org/docs/reference/null-safety.html) is aimed at eliminating the danger of null references from code. Since the `Article.id` is only specified when it's persisted (to be implemented in the next section), its supposed to allow `null`, so the nullable `Long?` is used
+* Since we are satisfied with the default values of the parameter, we do not need to change the `Article` instantiation on `Articleget.getArticles()`
+
+# Test with JUnit 5
+While JUnit 4 is still the default testing framework provided with Spring Boot, and can be used with Kotlin, JUnit 5 provides various features very handy with Kotlin, including autowiring of constructor / method parameters which allows to use non-nullable `val` properties and the possibility to use `@BeforeAll`/`@AfterAll` on regular non-static methods. Follow the steps below:
+1. Exclude `junit` maven transitive dependency from `spring-boot-starter-test`
+1. Add `junit-jupiter-engine` Maven dependency
+1. Add `junit-platform-surefire-provider` Maven dependency to `maven-surefire-plugin`
+1. Refactor `BlogApplicationTests.kt` to Junit 5
+1. Run `./mvnw clean install` and check if the build is still successful
+To make it easier, see the necessary changes in this [diff](https://github.com/fabriciolemos/kotlin-spring-boot-lab/commit/8885f82ad43934d22d9573ebb99df4b7a078fe45) or the expected final file content: [`pom.xml`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/8885f82ad43934d22d9573ebb99df4b7a078fe45/pom.xml) and [`BlogApplicationTests.kt`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/8885f82ad43934d22d9573ebb99df4b7a078fe45/src/test/kotlin/com/example/blog/BlogApplicationTests.kt)
+
+# Add test to `ArticleResource`
+1. Implement the [`ArticleResourceTest`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/2a35ad0685fdddf4014e14dd15280124c45f77de/src/test/kotlin/com/example/blog/ArticleResourceTest.kt). Make sure to put it in the `src/test/kotlin/com/example/blog/` folder. This short test is enough for the purpose of this lab, but I hope in real life you test more than the result size.
+1. Run `./mvnw clean install` and check if the test runs and the build is still successful
+### Understanding the code
+* We're using [`SpringExtension`](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testcontext-junit-jupiter-di) which is able to inject dependencies into test constructors. This makes it a good fit with Kotlin immutable and non-nullable properties
+* We use real sentences in test function names. Backticks are of part of the language to help with the [Java interop](https://kotlinlang.org/docs/reference/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin) but they also help writing more expressive test function names, instead of the usual of camel-case naming
+* [`getForEntity`](https://docs.spring.io/spring-framework/docs/5.0.7.RELEASE/kdoc-api/spring-framework/org.springframework.web.client/get-for-entity.html#) is another [Spring Kotlin extension](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/languages.html#kotlin-extensions). It takes advantage of Kotlin [reified type parameters](https://kotlinlang.org/docs/reference/inline-functions.html#reified-type-parameters), overcoming Java [type erasure](https://docs.oracle.com/javase/tutorial/java/generics/erasure.html) limitation which would require the usage of `ParameterizedTypeReference<List<Article>>`
+
+# Persistence with JPA
+1. Annotate `Article` with `@Entity` and `Article.id` with `@Id @GeneratedValue. Final result: [`Article`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/Article.kt)
+1. Implement [`ArticleRepository`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/ArticleRepository.kt)
+1. TODO: remove @autowired - Use the `ArticleRepository` to retrieve the list of Articles on [`ArticleResource`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/ArticleResource.kt)
+1. Add the Kotlin JPA plugin and add `kotlin-maven-noarg` dependency to the [`pom.xml](https://github.com/fabriciolemos/kotlin-spring-boot-lab/commit/1a3f0dbae6888f1250f367a1b97a325cb9dd934a)
+1. Re-run the application with `./mvnw spring-boot:run`
+1. Open your browser on [http://localhost:8080/article](http://localhost:8080/article). The result is not very exciting and you won't see anything since the database is empty. We'll solve this on next section
+### Understanding the code
+* JPA annotations can be used in the primary constructors, contributing for a concise code
+* Primary constructors will also have its dependencies automatically autowired, which is the case of [`ArticleResource`]
+* JPA requires the entities to have a zero-argument constructor. Since we added the primary constructor to `Article`, the entity is no longer satisfying that requirement. Kotlin [no-arg plugin](https://kotlinlang.org/docs/reference/compiler-plugins.html#no-arg-compiler-plugin) with JPA [support](https://kotlinlang.org/docs/reference/compiler-plugins.html#jpa-support) adds a zero-argument constructor for classes annotated with `@Entity`, `@Embeddable` and `@MappedSuperclass`
+
+# Add some Articles to the database
+1. TODO: remove @autowired - Implement the function [`BlogApplication.initDatabase()`](https://github.com/fabriciolemos/kotlin-spring-boot-lab/blob/9520f15705ad607c949c7e2391b0257811914166/src/main/kotlin/com/example/blog/BlogApplication.kt#L13)
+1. Re-run the application with `./mvnw spring-boot:run`
+1. Open your browser on [http://localhost:8080/article](http://localhost:8080/article). Now you should see some Articles on the page
+### Understanding the code
+* Now that [`BlogApplication`] has a body, it needs curly braces
+* The function `initDatabase` produces a `@Bean` of type [`CommandLineRunner`](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/CommandLineRunner.html) which implements a callback to run specific pieces of code when an application is fully started
+* `CommandLineRunner` is a [`FunctionalInterface`](https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html), meaning it's a Single Abstract Method ([SAM](http://cr.openjdk.java.net/~briangoetz/lambda/lambda-state-3.html)) interface, which can be [automatically converted](https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions) from Kotlin [function literals](https://kotlinlang.org/docs/reference/lambdas.html#lambda-expressions-and-anonymous-functions). If it got too complicated, the bottom line is the Kotlin support for functional programming allows us to implement the method the way we did, instead of having to [explicitly](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-command-line-runner) declare a class to instantiate a single method
+
