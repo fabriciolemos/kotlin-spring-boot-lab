@@ -10,7 +10,8 @@ Kotlin is a language developed by JetBrains, the company behind IntelliJ, so eve
 1. Select Kotlin as a language
 1. Use "blog" for Artifact
 1. For dependencies, select: Web, JPA, and H2
-1. Click on Generate Project link
+![Spring Initializr](https://i.imgur.com/fYqtURf.png)
+1. Click on Generate Project
 1. Unpack the downloaded project
 1. On command line run the application with `./mvnw spring-boot:run`
 
@@ -109,7 +110,7 @@ So that's it for now. Even though we haven't implemented the most exciting appli
 * Primary constructors
 * Kotlin Standard Library
 * Default imports
-* Functional parameters default values
+* Function parameters default values
 * Nullable and non-nullable types
 * Reified type parameters
 * Lambda Expressions and function literals
