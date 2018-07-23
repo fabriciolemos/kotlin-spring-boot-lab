@@ -1,6 +1,8 @@
 # kotlin-spring-boot-lab
 
-Welcome to the Spring Boot Kotlin lab. We're going to learn some of the Kotlin syntax and features while developing a Spring Boot app. Please follow the steps below.
+Welcome to the Spring Boot Kotlin lab. We're going to learn some of the Kotlin syntax and features while developing a Spring Boot app. 
+This lab is inspired on the [Spring Boot Kotlin Tutorial](https://spring.io/guides/tutorials/spring-boot-kotlin/), with more references to the Kotlin language features used and the format and scope adapted to a lab of one to one and half hours.
+Please follow the steps below.
 
 # Install IntelliJ
 Kotlin is a language developed by JetBrains, the company behind IntelliJ, so even though you can use any text editor, IntelliJ is recommended due to better integration with the language. Please, [download](https://www.jetbrains.com/idea/download/) and install the Ultimate or Community edition.
